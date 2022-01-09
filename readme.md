@@ -9,15 +9,18 @@ use({"shift-d/mappy.nvim"})
 ```
 
 # Usage
-
 ```lua
 -- mappy({mappings}, {options})
-local mappy = require("mappy")
+-- For nightly builds of neovim use:
+local mappy = require("mappy").nightly
+
+-- For stable builds of neovim use:
+local mappy = require("mappy").stable
 mappy({
     mode = {
         ["lhs"] = "rhs",
         ["nested"] = {
-            ["thing"] = lua_function,
+            ["lhs"] = "rhs",
         },
     },
 }, { options }) -- See :h vim.keymap
