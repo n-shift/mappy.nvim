@@ -24,6 +24,9 @@ local function walk(map_table, prev)
 	return outline
 end
 
+---Set mappings using nvim_set_keymap api
+---@param maps table
+---@param options table
 mappy.stable = function (maps, options)
     for mode, mode_maps in pairs(maps) do
         local outline = walk(mode_maps)
