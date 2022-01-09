@@ -1,6 +1,6 @@
 # mappy.nvim
 
-It is a simple wrapper around `vim.keymap.set` function. Supports tables.
+mappy.nvim is a simple wrapper around `vim.keymap.set` for nightly builds or `vim.api.nvim_set_keymap` for stable builds function. Supports tables.
 
 # Installation
 
