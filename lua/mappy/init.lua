@@ -63,11 +63,7 @@ mappy.nightly = function(maps, options)
     local outline = walk(maps)
     for lhs, rhs in pairs(outline) do
         local map = gen_mapper(vim.keymap.set, lhs, rhs, options.map)
-        if type(options.mode) == "table" then
-            for _, modechar in pairs(options.mode) do
-                map(modechar)
-            end
-        elseif options.mode == nil then
+        if options.mode == nil then
             map("n")
         else
             map(options.mode)
