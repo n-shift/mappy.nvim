@@ -71,4 +71,17 @@ mappy.nightly = function(maps, options)
     end
 end
 
+---Integration with which-key.nvim
+---@param maps table
+mappy.link = function(maps)
+    local present, wk = pcall(require, "which-key")
+    if not present then
+        vim.notify("folke/which-key.nvim could not be loaded, aborting linking", "error", {title = "mappy.nvim"})
+    end
+    local links = walk(maps)
+    for mapping, description in pairs(links) do
+        wk.register({ [mapping] = { name = description } })
+    end
+end
+
 return mappy
