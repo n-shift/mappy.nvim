@@ -20,13 +20,13 @@ use({"shift-d/mappy.nvim"})
 
 - Telescope picker to view your mappings
 - Register mappings based on condition (filetype, event, buffername)
-- [which-key.nvim](https://github.com/folke/which-key.nvim) integration
 
 ## Features
 
 - Stable-compatible
 - Nested mappings
 - Multiple modes
+- [which-key.nvim](https://github.com/folke/which-key.nvim) integration
 
 ## Usage
 ```lua
