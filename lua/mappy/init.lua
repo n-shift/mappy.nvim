@@ -1,13 +1,12 @@
 -- Mappy.nvim --
 -- ---------- --
 
+local mappy = {}
+
 ---Walk over table of mappings, return vim.keymap-compatible ones
 ---@param map_table table
 ---@param prev string
 ---@return table
-
-local mappy = {}
-
 local function walk(map_table, prev)
 	prev = prev or ""
 
