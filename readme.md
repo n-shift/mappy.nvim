@@ -26,7 +26,6 @@ use({"shift-d/mappy.nvim"})
 
 - Stable-compatible
 - Nested mappings
-- Multiple modes for one mapping
 
 ## Usage
 ```lua
@@ -37,9 +36,11 @@ local mappy = require("mappy").nightly
 -- For stable builds of neovim use:
 local mappy = require("mappy").stable
 mappy({
-    ["lhs"] = "rhs",
-    ["lhs"] = {
-        ["lhs"] = {"rhs", mode or {mode, mode}, opts},
+    mode = {
+        ["lhs"] = "rhs",
+        ["nested"] = {
+            ["lhs"] = "rhs",
+        },
     },
 }, { options }) -- See :h vim.keymap
 ```
