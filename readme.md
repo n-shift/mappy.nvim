@@ -26,21 +26,28 @@ use({"shift-d/mappy.nvim"})
 
 - Stable-compatible
 - Nested mappings
+- Multiple modes
 
 ## Usage
 ```lua
 -- mappy({mappings}, {options})
 -- For nightly builds of neovim use:
 local mappy = require("mappy").nightly
-
 -- For stable builds of neovim use:
 local mappy = require("mappy").stable
+
 mappy({
-    mode = {
-        ["lhs"] = "rhs",
-        ["nested"] = {
-            ["lhs"] = "rhs",
-        },
+    lhs = rhs,
+    lhs = {
+        lhs = rhs,
     },
-}, { options }) -- See :h vim.keymap
+}, {
+    -- "n" by default
+    mode = { "n", "i" },
+    -- or
+    mode = "i",
+    map = {
+        -- api function's options (:h vim.keymap or :h nvim_set_keymap)
+    },
+})
 ```
