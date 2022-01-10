@@ -1,24 +1,23 @@
 -- Mappy.nvim --
 -- ---------- --
 
-local mappy = {}
-
----Walk over table of mappings, return vim api compatible ones
+---Walk over table of mappings, return vim.keymap-compatible ones
 ---@param map_table table
 ---@param prev string
 ---@return table
+
+local mappy = {}
+
 local function walk(map_table, prev)
 	prev = prev or ""
 
 	local outline = {}
 
-	for lhs, group in pairs(map_table) do
-        local rhs = group[1]
+	for lhs, rhs in pairs(map_table) do
 		if type(rhs) == "table" then
 			outline = vim.tbl_deep_extend("error", outline, walk(rhs, prev .. lhs))
 		else
-			outline[prev .. lhs] = { rhs, group[2], group[3] }
-            print(vim.inspect(outline))
+			outline[prev .. lhs] = rhs
 		end
 	end
 
@@ -29,16 +28,10 @@ end
 ---@param maps table
 ---@param options table
 mappy.stable = function (maps, options)
-    for _, mappings in pairs(maps) do
-        local outline = walk(mappings)
-        for lhs, group in pairs(outline) do
-            if type(group[2]) == "table" then
-                for _, modechar in pairs(group[2]) do
-                    vim.api.nvim_set_keymap(modechar, lhs, group[1], vim.tbl_deep_extend("force", options or {}, group[3] or {}))
-                end
-            else
-                vim.api.nvim_set_keymap(group[2], lhs, group[1], vim.tbl_deep_extend("force", options or {}, group[3] or {}))
-            end
+    for mode, mode_maps in pairs(maps) do
+        local outline = walk(mode_maps)
+        for lhs, rhs in pairs(outline) do
+            vim.api.nvim_set_keymap(mode, lhs, rhs, options)
         end
     end
 end
@@ -47,17 +40,12 @@ end
 ---@param maps table
 ---@param options table
 mappy.nightly = function(maps, options)
-    local outline = walk(maps)
-    print(vim.inspect(outline))
-    for lhs, group in pairs(outline) do
-        if type(group[2]) == "table" then
-            for _, modechar in pairs(group[2]) do
-                vim.keymap.set(modechar, lhs, group[1], vim.tbl_deep_extend("force", options or {}, group[3] or {}))
-            end
-        else
-            vim.keymap.set(group[2], lhs, group[1], vim.tbl_deep_extend("force", options or {}, group[3] or {})) 
-        end
-    end
+	for mode, mode_maps in pairs(maps) do
+		local outline = walk(mode_maps)
+		for lhs, rhs in pairs(outline) do
+			vim.keymap.set(mode, lhs, rhs, options)
+		end
+	end
 end
 
 return mappy
