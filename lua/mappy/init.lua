@@ -105,15 +105,15 @@ end
 ---@param version string
 ---@param opts table
 ---@param storage string
-mappy.event = function(maps, event, version, storage)
+mappy.event = function(maps, event, version, opts, storage)
     if storage == nil then
         vim.notify("Specify global variable name where mappings will be stored","error", {title="mappy.nvim"})
         return
     end
     opts = opts or {}
-    vim.g[storage] = maps
+    vim.g[storage] = { maps = maps, opts = opts }
     vim.cmd("augroup mappy")
-    vim.cmd("au "..event.." lua require('mappy')."..version.."(vim.g."..storage..")")
+    vim.cmd("au "..event.." lua require('mappy')."..version.."(vim.g."..storage..".maps, vim.g.)"..storage..".opts")
     vim.cmd("augroup END")
 end
 
