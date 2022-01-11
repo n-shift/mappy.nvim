@@ -3,6 +3,32 @@
 
 local mappy = {}
 
+---Create empty metatable
+function mappy:new()
+    self.maps = nil
+    self.options = nil
+    self.vim_event = nil
+    self.storage = nil
+
+    return self
+end
+
+---Placeholder function
+function mappy:map()
+    vim.notify("Set config.version in mappy:setup to use this function!", "info", { title = "mappy.nvim" })
+end
+
+---Setup mappy.nvim config
+---@param config table
+function mappy:setup(config)
+    -- Set up mapper
+    if config.version == "stable" then
+        self.map = self.stable
+    elseif config.version == "nightly" then
+        self.map = self.nightly
+    end
+end
+
 ---Walk over table of mappings, return vim.keymap-compatible ones
 ---@param map_table table
 ---@param prev string
@@ -48,16 +74,6 @@ end
 
 function mappy:set_event(event)
     self.vim_event = event
-    return self
-end
-
-function mappy:set_version(version)
-    self.version = version
-    return self
-end
-
-function mappy:set_storage(storage)
-    self.storage = storage
     return self
 end
 
@@ -126,31 +142,20 @@ end
 -- TODO: clean autocmds on the mappy setup
 
 ---Automap only if event if triggered
-function mappy:event_map()
+---@param storage string
+function mappy:event_map(storage)
     local maps = self.maps
     local event = self.vim_event
-    local version = self.version
     local opts = self.options
-    local storage = self.storage
     if storage == nil then
         vim.notify("Specify global variable name where mappings will be stored","error", {title="mappy.nvim"})
         return
     end
     opts = opts or {}
-    vim.g[storage] = { maps = maps, opts = opts }
+    self.storage = { maps = maps, opts = opts }
     vim.cmd("augroup mappy")
-    vim.cmd("au "..event.." lua require('mappy')."..version.."(vim.g."..storage..".maps, vim.g.)"..storage..".opts")
+    vim.cmd("au "..event.." lua require('mappy'):new():set_maps(require('mappy')."..storage..".maps):set_opts("..storage..".opts):nightly()")
     vim.cmd("augroup END")
-    return self
-end
-
-function mappy:new()
-    self.maps = nil
-    self.options = nil
-    self.vim_event = nil
-    self.version = nil
-    self.storage = nil
-
     return self
 end
 
