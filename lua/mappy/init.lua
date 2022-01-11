@@ -35,11 +35,36 @@ local function gen_mapper(api, lhs, rhs, opts)
     end
 end
 
+
+function mappy:set_maps(maps)
+    self.maps = maps
+    return self
+end
+
+function mappy:set_opts(opts)
+    self.options = opts
+    return self
+end
+
+function mappy:set_event(event)
+    self.vim_event = event
+    return self
+end
+
+function mappy:set_version(version)
+    self.version = version
+    return self
+end
+
+function mappy:set_storage(storage)
+    self.storage = storage
+    return self
+end
+
 ---Set mappings using nvim_set_keymap api
----@param maps table
----@param options table
-mappy.stable = function (maps, options)
-    options = options or {}
+function mappy:stable()
+    local maps = self.maps
+    local options = self.options or {}
     local outline = walk(maps)
     for lhs, rhs in pairs(outline) do
         if type(rhs) ~= "string" then
@@ -61,13 +86,13 @@ mappy.stable = function (maps, options)
             map(options.mode)
         end
     end
+    return self
 end
 
 ---Set mappings using vim.keymap api
----@param maps table
----@param options table
-mappy.nightly = function(maps, options)
-    options = options or {}
+function mappy:nightly()
+    local maps = self.maps
+    local options = self.options or {}
     local outline = walk(maps)
     for lhs, rhs in pairs(outline) do
         if type(rhs) ~= "function" and type(rhs) ~= "string" then
@@ -80,11 +105,12 @@ mappy.nightly = function(maps, options)
             map(options.mode)
         end
     end
+    return self
 end
 
 ---Integration with which-key.nvim
----@param maps table
-mappy.link = function(maps)
+function mappy:link()
+    local maps = self.maps
     local present, wk = pcall(require, "which-key")
     if not present then
         vim.notify("folke/which-key.nvim could not be loaded, aborting linking", "error", {title = "mappy.nvim"})
@@ -94,17 +120,18 @@ mappy.link = function(maps)
     for mapping, description in pairs(links) do
         wk.register({ [mapping] = { name = description } })
     end
+    return self
 end
 
 -- TODO: clean autocmds on the mappy setup
 
 ---Automap only if event if triggered
----@param maps table
----@param event string
----@param version string
----@param opts table
----@param storage string
-mappy.event = function(maps, event, version, opts, storage)
+function mappy:event_map()
+    local maps = self.maps
+    local event = self.vim_event
+    local version = self.version
+    local opts = self.options
+    local storage = self.storage
     if storage == nil then
         vim.notify("Specify global variable name where mappings will be stored","error", {title="mappy.nvim"})
         return
@@ -114,6 +141,17 @@ mappy.event = function(maps, event, version, opts, storage)
     vim.cmd("augroup mappy")
     vim.cmd("au "..event.." lua require('mappy')."..version.."(vim.g."..storage..".maps, vim.g.)"..storage..".opts")
     vim.cmd("augroup END")
+    return self
+end
+
+function mappy:new()
+    self.maps = nil
+    self.options = nil
+    self.vim_event = nil
+    self.version = nil
+    self.storage = nil
+
+    return self
 end
 
 return mappy
