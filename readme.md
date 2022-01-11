@@ -19,7 +19,6 @@ use({"shift-d/mappy.nvim"})
 ## Planned features
 
 - Telescope picker to view your mappings
-- Register mappings based on condition (filetype, event, buffername)
 
 ## Features
 
@@ -27,6 +26,7 @@ use({"shift-d/mappy.nvim"})
 - Nested mappings
 - Multiple modes
 - [which-key.nvim](https://github.com/folke/which-key.nvim) integration
+- Register mappings based on event
 
 ## Usage
 
@@ -63,4 +63,15 @@ mappy({
         lhs = description,
     },
 })
+```
+
+### Register on VimEvent
+```lua
+local mappy = require("mappy").event
+-- maps - table with mappings (look at previous examples)
+-- event - vim event, just like in autocmds (:h event)
+-- version - "stable" or "nightly"
+-- options - see previous examples
+-- storage - global variable with mappings stored name (must be different for every .event call)
+mappy(maps, event, version, options, storage)
 ```
