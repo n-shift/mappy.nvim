@@ -67,11 +67,10 @@ end
 ---@param maps table
 ---@param options table
 mappy.nightly = function(maps, options)
-    vim.notify("Exec")
     options = options or {}
     local outline = walk(maps)
     for lhs, rhs in pairs(outline) do
-        if type(rhs) ~= "function" or type(rhs) ~= "string" then
+        if type(rhs) ~= "function" and type(rhs) ~= "string" then
             vim.notify("You can map only a string or a function as rhs!", "error", {title="mappy.nvim"})
         end
         local map = gen_mapper(vim.keymap.set, lhs, rhs, options.map)
