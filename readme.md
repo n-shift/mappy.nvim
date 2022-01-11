@@ -29,6 +29,8 @@ use({"shift-d/mappy.nvim"})
 - [which-key.nvim](https://github.com/folke/which-key.nvim) integration
 
 ## Usage
+
+### Mapping
 ```lua
 -- mappy({mappings}, {options})
 -- For nightly builds of neovim use:
@@ -48,6 +50,17 @@ mappy({
     mode = "i",
     map = {
         -- api function's options (:h vim.keymap or :h nvim_set_keymap)
+    },
+})
+```
+
+### Integration with which-key
+```lua
+local mappy = require("mappy").link
+mappy({
+    lhs = description,
+    lhs = {
+        lhs = description,
     },
 })
 ```
