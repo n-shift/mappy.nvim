@@ -1,9 +1,10 @@
--- Mappy.nvim --
--- ---------- --
+--- @module mappy
+--- @author shift
+--- @license GPLv3
 
 local mappy = {}
 
----Create empty metatable
+--- Create empty metatable
 function mappy:new()
     self.maps = nil
     self.options = nil
@@ -13,13 +14,13 @@ function mappy:new()
     return self
 end
 
----Placeholder function
+--- Placeholder function
 function mappy:map()
     vim.notify("Set config.version in mappy:setup to use this function!", "info", { title = "mappy.nvim" })
 end
 
----Setup mappy.nvim config
----@param config table
+--- Setup mappy.nvim config
+--- @param config table mappy.nvim config
 function mappy:setup(config)
     -- Set up mapper
     if config.version == "stable" then
@@ -29,10 +30,10 @@ function mappy:setup(config)
     end
 end
 
----Walk over table of mappings, return vim.keymap-compatible ones
----@param map_table table
----@param prev string
----@return table
+--- Walk over table of mappings, return vim.keymap-compatible ones
+--- @param map_table table table of mappings
+--- @param prev string previous lhs
+--- @return table table output lhs = rhs mappings
 local function walk(map_table, prev)
 	prev = prev or ""
 
@@ -49,12 +50,12 @@ local function walk(map_table, prev)
 	return outline
 end
 
----Generate reusable mapper function. Reused with different modes.
----@param api function
----@param lhs string
----@param rhs string | function
----@param opts table
----@return function
+--- Generate reusable mapper function. Reused with different modes.
+--- @param api function function that will be used for mapping
+--- @param lhs string
+--- @param rhs string | function
+--- @param opts table mapper options
+--- @return function generated mapper function
 local function gen_mapper(api, lhs, rhs, opts)
     return function(mode)
         api(mode, lhs, rhs, opts)
@@ -62,22 +63,31 @@ local function gen_mapper(api, lhs, rhs, opts)
 end
 
 
+--- Set module maps
+--- @param maps table nested keymap table
+--- @return table
 function mappy:set_maps(maps)
     self.maps = maps
     return self
 end
 
+--- Set module options
+--- @param opts table {mode, map}
+--- @return table
 function mappy:set_opts(opts)
     self.options = opts
     return self
 end
 
+--- Set module VimEvent
+--- @param event string see :h event
+--- @return table
 function mappy:set_event(event)
     self.vim_event = event
     return self
 end
 
----Set mappings using nvim_set_keymap api
+--- Set mappings using nvim_set_keymap api
 function mappy:stable()
     local maps = self.maps
     local options = self.options or {}
@@ -105,7 +115,7 @@ function mappy:stable()
     return self
 end
 
----Set mappings using vim.keymap api
+--- Set mappings using vim.keymap api
 function mappy:nightly()
     local maps = self.maps
     local options = self.options or {}
@@ -124,7 +134,7 @@ function mappy:nightly()
     return self
 end
 
----Integration with which-key.nvim
+--- Integration with which-key.nvim
 function mappy:link()
     local maps = self.maps
     local present, wk = pcall(require, "which-key")
@@ -141,8 +151,8 @@ end
 
 -- TODO: clean autocmds on the mappy setup
 
----Automap only if event if triggered
----@param storage string
+--- Automap only if event if triggered
+--- @param storage string name of variable that contains event map
 function mappy:event_map(storage)
     local maps = self.maps
     local event = self.vim_event
