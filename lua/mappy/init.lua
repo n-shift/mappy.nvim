@@ -16,7 +16,7 @@ end
 
 --- Placeholder function
 function mappy:map()
-    vim.notify("Set config.version in mappy:setup to use this function!", "info", { title = "mappy.nvim" })
+    vim.notify("Set config.version in mappy:setup to use this function!", "warn", { title = "mappy.nvim" })
 end
 
 --- Setup mappy.nvim config
@@ -67,6 +67,12 @@ local function gen_mapper(api, lhs, rhs, opts)
     end
 end
 
+--- Alias for error log
+--- @param message string error message
+local function notify_error(message)
+    vim.notify(message, "error", { title = "mappy.nvim" })
+end
+
 
 --- Set module maps
 --- @param maps table nested keymap table
@@ -100,9 +106,9 @@ function mappy:stable()
     for lhs, rhs in pairs(outline) do
         if type(rhs) ~= "string" then
             if type(rhs) == "function" then
-                vim.notify("You can map a lua function only if you are using nightly api!", "error", {title="mappy.nvim"})
+                notify_error("You can map a lua function only if you are using nightly api!")
             else
-                vim.notify("You can only map a string in stable mode", "error", {title="mappy.nvim"})
+                notify_error("You can only map a string in stable mode")
             end
             return
         end
@@ -127,7 +133,7 @@ function mappy:nightly()
     local outline = walk(maps)
     for lhs, rhs in pairs(outline) do
         if type(rhs) ~= "function" and type(rhs) ~= "string" then
-            vim.notify("You can map only a string or a function as rhs!", "error", {title="mappy.nvim"})
+            notify_error("You can map only a string or a function as rhs!")
         end
         local map = gen_mapper(vim.keymap.set, lhs, rhs, options.map)
         if options.mode == nil then
@@ -144,7 +150,7 @@ function mappy:link()
     local maps = self.maps
     local present, wk = pcall(require, "which-key")
     if not present then
-        vim.notify("folke/which-key.nvim could not be loaded, aborting linking", "error", {title = "mappy.nvim"})
+        notify_error("folke/which-key.nvim could not be loaded, aborting linking")
         return
     end
     local links = walk(maps)
@@ -161,7 +167,7 @@ function mappy:event_map(storage)
     local event = self.vim_event
     local opts = self.options
     if storage == nil then
-        vim.notify("Specify global variable name where mappings will be stored","error", {title="mappy.nvim"})
+        notify_error("Specify global variable name where mappings will be stored")
         return
     end
     opts = opts or {}
