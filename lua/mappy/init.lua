@@ -22,6 +22,11 @@ end
 --- Setup mappy.nvim config
 --- @param config table mappy.nvim config
 function mappy:setup(config)
+    -- Clean mappy autocmds
+    vim.cmd("augroup mappy")
+    vim.cmd("au!")
+    vim.cmd("augroup END")
+
     -- Set up mapper
     if config.version == "stable" then
         self.map = self.stable
@@ -148,8 +153,6 @@ function mappy:link()
     end
     return self
 end
-
--- TODO: clean autocmds on the mappy setup
 
 --- Automap only if event if triggered
 --- @param storage string name of variable that contains event map
