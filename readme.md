@@ -30,48 +30,97 @@ use({"shift-d/mappy.nvim"})
 
 ## Usage
 
-### Mapping
-```lua
--- mappy({mappings}, {options})
--- For nightly builds of neovim use:
-local mappy = require("mappy").nightly
--- For stable builds of neovim use:
-local mappy = require("mappy").stable
+### Setup
 
-mappy({
+- `version` param creates an alias for `mappy:stable` or `mappy:nightly` function. By default mappy:map is a placeholder function. Accepts either `"nightly"` or `"stable"`
+
+```lua
+require("mappy")({
+    version = "stable" | "nightly"
+})
+```
+
+### Creating a "module"
+Use `mappy:new()` to create a default module.
+```lua
+local module = require("mappy"):new()
+```
+
+### Setting values
+
+#### Adding map table into module
+
+```lua
+module:set_maps({
     lhs = rhs,
-    lhs = {
-        lhs = rhs,
-    },
-}, {
-    -- "n" by default
-    mode = { "n", "i" },
-    -- or
-    mode = "i",
-    map = {
-        -- api function's options (:h vim.keymap or :h nvim_set_keymap)
-    },
+    nested_ = {
+        _lhs = rhs,
+    }
 })
 ```
 
-### Integration with which-key
+#### Adding options table into module
 ```lua
-local mappy = require("mappy").link
-mappy({
+module:set_opts({
+    modes = "modechar" | { "mode", "char" },
+    map = {...} -- Look at the docs of map function's api
+})
+```
+
+####  Setting an event of module
+```lua
+module:set_event("VimEvent") -- see :h events
+```
+
+### Mapping
+
+Note that `mappy:set_maps` function should be called before.
+
+#### If `config.version` exists
+```lua
+module:map()
+```
+
+#### Stable mode
+
+Stable mode is using vim.api.nvim_set_keymap function to set mappings. Useful for 6.1 and previous versions of neovim.
+
+```lua
+module:stable()
+```
+
+#### Nightly mode
+
+Nightly mode is using vim.keymap.set function to set mappings. Neovim nightly is required. (probably will included in next stable release of neovim)
+
+```lua
+module:nightly()
+```
+
+#### VimEvent-based mapping
+
+Requirements:
+- `mappy:set_event` called
+- `config.version` set
+
+```lua
+-- storage is a name for table with event map. must be different for every call.
+module:event_map(storage)
+```
+
+### Which-key integration
+
+####  Setting map
+```lua
+module:map({
     lhs = description,
-    lhs = {
-        lhs = description,
-    },
+    nested_ = {
+        _lhs = description
+    }
 })
 ```
 
-### Register on VimEvent
+#### Setting description
 ```lua
-local mappy = require("mappy").event
--- maps - table with mappings (look at previous examples)
--- event - vim event, just like in autocmds (:h event)
--- version - "stable" or "nightly"
--- options - see previous examples
--- storage - global variable with mappings stored name (must be different for every .event call)
-mappy(maps, event, version, options, storage)
+mappy:link()
 ```
