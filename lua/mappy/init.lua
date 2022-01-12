@@ -3,21 +3,7 @@
 --- @license GPLv3
 
 local mappy = {}
-
---- Create empty metatable
-function mappy:new()
-    self.maps = nil
-    self.options = nil
-    self.vim_event = nil
-    self.storage = nil
-
-    return self
-end
-
---- Placeholder function
-function mappy:map()
-    vim.notify("Set config.version in mappy:setup to use this function!", "warn", { title = "mappy.nvim" })
-end
+local utils = require("mappy.utils")
 
 --- Setup mappy.nvim config
 --- @param config table mappy.nvim config
@@ -35,44 +21,20 @@ function mappy:setup(config)
     end
 end
 
---- Walk over table of mappings, return vim.keymap-compatible ones
---- @param map_table table table of mappings
---- @param prev string previous lhs
---- @return table table output lhs = rhs mappings
-local function walk(map_table, prev)
-	prev = prev or ""
+--- Create empty metatable
+function mappy:new()
+    self.maps = nil
+    self.options = nil
+    self.vim_event = nil
+    self.storage = nil
 
-	local outline = {}
-
-	for lhs, rhs in pairs(map_table) do
-		if type(rhs) == "table" then
-			outline = vim.tbl_deep_extend("error", outline, walk(rhs, prev .. lhs))
-		else
-			outline[prev .. lhs] = rhs
-		end
-	end
-
-	return outline
+    return self
 end
 
---- Generate reusable mapper function. Reused with different modes.
---- @param api function function that will be used for mapping
---- @param lhs string
---- @param rhs string | function
---- @param opts table mapper options
---- @return function generated mapper function
-local function gen_mapper(api, lhs, rhs, opts)
-    return function(mode)
-        api(mode, lhs, rhs, opts)
-    end
+--- Placeholder function
+function mappy:map()
+    vim.notify("Set config.version in mappy:setup to use this function!", "warn", { title = "mappy.nvim" })
 end
-
---- Alias for error log
---- @param message string error message
-local function notify_error(message)
-    vim.notify(message, "error", { title = "mappy.nvim" })
-end
-
 
 --- Set module maps
 --- @param maps table nested keymap table
@@ -102,17 +64,17 @@ end
 function mappy:stable()
     local maps = self.maps
     local options = self.options or {}
-    local outline = walk(maps)
+    local outline = utils.walk(maps)
     for lhs, rhs in pairs(outline) do
         if type(rhs) ~= "string" then
             if type(rhs) == "function" then
-                notify_error("You can map a lua function only if you are using nightly api!")
+                utils.notify_error("You can map a lua function only if you are using nightly api!")
             else
-                notify_error("You can only map a string in stable mode")
+                utils.notify_error("You can only map a string in stable mode")
             end
             return
         end
-        local map = gen_mapper(vim.api.nvim_set_keymap, lhs, rhs, options.map)
+        local map = utils.gen_mapper(vim.api.nvim_set_keymap, lhs, rhs, options.map)
         if type(options.mode) == "table" then
             for _, modechar in pairs(options.mode) do
                 map(modechar)
@@ -130,13 +92,13 @@ end
 function mappy:nightly()
     local maps = self.maps
     local options = self.options or {}
-    local outline = walk(maps)
+    local outline = utils.walk(maps)
     for lhs, rhs in pairs(outline) do
         if type(rhs) ~= "function" and type(rhs) ~= "string" then
-            notify_error("You can map only a string or a function as rhs!")
+            utils.notify_error("You can map only a string or a function as rhs!")
             return
         end
-        local map = gen_mapper(vim.keymap.set, lhs, rhs, options.map)
+        local map = utils.gen_mapper(vim.keymap.set, lhs, rhs, options.map)
         if options.mode == nil then
             map("n")
         else
@@ -151,10 +113,10 @@ function mappy:link()
     local maps = self.maps
     local present, wk = pcall(require, "which-key")
     if not present then
-        notify_error("folke/which-key.nvim could not be loaded, aborting linking")
+        utils.notify_error("folke/which-key.nvim could not be loaded, aborting linking")
         return
     end
-    local links = walk(maps)
+    local links = utils.walk(maps)
     for mapping, description in pairs(links) do
         wk.register({ [mapping] = { name = description } })
     end
@@ -168,7 +130,7 @@ function mappy:event_map(storage)
     local event = self.vim_event
     local opts = self.options
     if storage == nil then
-        notify_error("Specify global variable name where mappings will be stored")
+        utils.notify_error("Specify global variable name where mappings will be stored")
         return
     end
     opts = opts or {}
