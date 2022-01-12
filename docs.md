@@ -11,7 +11,7 @@ Mappy.nvim is a simple mapper for neovim
 
 # Usage
 
- Setup
+# Setup
 
 - `version` param creates an alias for `mappy:stable` or `mappy:nightly` function. By default mappy:map is a placeholder function. Accepts either `"nightly"` or `"stable"`
 
