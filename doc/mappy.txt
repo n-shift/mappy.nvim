@@ -8,19 +8,20 @@ CONTENTS                                                          *mappy-content
 1. Abstract.......................................................|mappy-abstract|
 2. Concept.........................................................|mappy-concept|
 3. Usage.............................................................|mappy-usage|
-4. Creating a "module".................................|mappy-creating_a_"module"|
-5. Setting values...........................................|mappy-setting_values|
-6. Adding map table into module...............|mappy-adding_map_table_into_module|
-7. Adding options table into module.......|mappy-adding_options_table_into_module|
-8. Setting an event of module...................|mappy-setting_an_event_of_module|
-9. Mapping.........................................................|mappy-mapping|
-10. If `config.version` exists..................|mappy-if_`config.version`_exists|
-11. Stable mode................................................|mappy-stable_mode|
-12. Nightly mode..............................................|mappy-nightly_mode|
-13. VimEvent-based mapping..........................|mappy-vimevent-based_mapping|
-14. Which-key integration............................|mappy-which-key_integration|
-15. Setting map................................................|mappy-setting_map|
-16. Setting description................................|mappy-setting_description|
+4. Setup.............................................................|mappy-setup|
+5. Creating a "module".................................|mappy-creating_a_"module"|
+6. Setting values...........................................|mappy-setting_values|
+7. Adding map table into module...............|mappy-adding_map_table_into_module|
+8. Adding options table into module.......|mappy-adding_options_table_into_module|
+9. Setting an event of module...................|mappy-setting_an_event_of_module|
+10. Mapping........................................................|mappy-mapping|
+11. If `config.version` exists..................|mappy-if_`config.version`_exists|
+12. Stable mode................................................|mappy-stable_mode|
+13. Nightly mode..............................................|mappy-nightly_mode|
+14. VimEvent-based mapping..........................|mappy-vimevent-based_mapping|
+15. Which-key integration............................|mappy-which-key_integration|
+16. Setting map................................................|mappy-setting_map|
+17. Setting description................................|mappy-setting_description|
 
 ================================================================================
 ABSTRACT                                                          *mappy-abstract*
@@ -37,7 +38,8 @@ CONCEPT                                                            *mappy-concep
 ================================================================================
 USAGE                                                                *mappy-usage*
 
-Setup
+================================================================================
+SETUP                                                                *mappy-setup*
 
 *   `version` param creates an alias for `mappy:stable` or `mappy:nightly` function. By default mappy:map is a placeholder function. Accepts either `"nightly"` or `"stable"`
 >
