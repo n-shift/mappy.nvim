@@ -5,21 +5,6 @@
 local mappy = {}
 local utils = require("mappy.utils")
 
---- Create empty metatable
-function mappy:new()
-    self.maps = nil
-    self.options = nil
-    self.vim_event = nil
-    self.storage = nil
-
-    return self
-end
-
---- Placeholder function
-function mappy:map()
-    vim.notify("Set config.version in mappy:setup to use this function!", "warn", { title = "mappy.nvim" })
-end
-
 --- Setup mappy.nvim config
 --- @param config table mappy.nvim config
 function mappy:setup(config)
@@ -34,6 +19,21 @@ function mappy:setup(config)
     elseif config.version == "nightly" then
         self.map = self.nightly
     end
+end
+
+--- Create empty metatable
+function mappy:new()
+    self.maps = nil
+    self.options = nil
+    self.vim_event = nil
+    self.storage = nil
+
+    return self
+end
+
+--- Placeholder function
+function mappy:map()
+    vim.notify("Set config.version in mappy:setup to use this function!", "warn", { title = "mappy.nvim" })
 end
 
 --- Set module maps
