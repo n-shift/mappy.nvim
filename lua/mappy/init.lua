@@ -134,6 +134,7 @@ function mappy:nightly()
     for lhs, rhs in pairs(outline) do
         if type(rhs) ~= "function" and type(rhs) ~= "string" then
             notify_error("You can map only a string or a function as rhs!")
+            return
         end
         local map = gen_mapper(vim.keymap.set, lhs, rhs, options.map)
         if options.mode == nil then
