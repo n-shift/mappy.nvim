@@ -66,7 +66,7 @@ function mappy:stable()
     local options = self.options or {}
     local outline = utils.walk(maps)
     for lhs, rhs in pairs(outline) do
-        if type(rhs) ~= "string" then
+        if type(rhs) ~= "string" and rhs.rhs == nil then
             if type(rhs) == "function" then
                 utils.notify_error("You can map a lua function only if you are using nightly api!")
             else
@@ -94,7 +94,7 @@ function mappy:nightly()
     local options = self.options or {}
     local outline = utils.walk(maps)
     for lhs, rhs in pairs(outline) do
-        if type(rhs) ~= "function" and type(rhs) ~= "string" then
+        if type(rhs) ~= "function" and type(rhs) ~= "string" and not rhs.custom then
             utils.notify_error("You can map only a string or a function as rhs!")
             return
         end

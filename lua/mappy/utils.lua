@@ -14,10 +14,16 @@ function utils.walk(map_table, prev)
 	local outline = {}
 
 	for lhs, rhs in pairs(map_table) do
-		if type(rhs) == "table" then
+        if rhs.type then
+            if rhs.custom == nil then
+                outline[prev..lhs] = rhs
+            else
+                outline[prev..lhs] = { rhs.rhs, rhs.description }
+            end
+        elseif type(rhs) == "table" then
 			outline = vim.tbl_deep_extend("error", outline, utils.walk(rhs, prev .. lhs))
 		else
-			outline[prev .. lhs] = rhs
+            outline[prev .. lhs] = rhs
 		end
 	end
 
@@ -27,12 +33,16 @@ end
 --- Generate reusable mapper function. Reused with different modes.
 --- @param api function function that will be used for mapping
 --- @param lhs string
---- @param rhs string | function
+--- @param rhs string | function | table
 --- @param opts table mapper options
 --- @return function generated mapper function
 function utils.gen_mapper(api, lhs, rhs, opts)
     return function(mode)
-        api(mode, lhs, rhs, opts)
+        if rhs.rhs ~= nil then
+            api(mode, lhs, rhs.rhs, opts)
+        else
+            api(mode, lhs, rhs, opts)
+        end
     end
 end
 
