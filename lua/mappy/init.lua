@@ -74,7 +74,16 @@ function mappy:stable()
             end
             return
         end
-        local map = utils.gen_mapper(vim.api.nvim_set_keymap, lhs, rhs, options.map)
+        local map
+        if options.map.buffer then
+            local bufnr = options.map.buffer == true and 0 or options.map.buffer
+            options.map.buffer = nil
+            map = utils.gen_mapper(function(...)
+                vim.api.nvim_buf_set_keymap(bufnr, ...)
+            end, lhs, rhs, options.map)
+        else
+            map = utils.gen_mapper(vim.api.nvim_set_keymap, lhs, rhs, options.map)
+        end
         if type(options.mode) == "table" then
             for _, modechar in pairs(options.mode) do
                 map(modechar)
